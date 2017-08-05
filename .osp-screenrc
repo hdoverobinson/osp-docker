@@ -7,4 +7,3 @@ split
 focus down
 screen -t xritdemod /bin/bash -c "../xritdemod/xritDemodulator"
 focus left
-
