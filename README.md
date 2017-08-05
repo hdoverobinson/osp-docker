@@ -2,8 +2,7 @@
 This is a docker container for the Open Satellite Project's xritdemod and goesdump.
 
 Building the container:
-`cd osp-docker/
-docker build -t osp-docker .`
+`cd osp-docker/ && docker build -t osp-docker .`
 
 Running the container:
 `docker run --privileged -v /dev/bus/usb:/dev/bus/usb -v ~/osp-docker:/root/run -p 8090:8090 -it osp-build screen -c .osp-screenrc`
