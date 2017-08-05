@@ -1,0 +1,10 @@
+layout new
+screen -t goesdump /bin/bash -c "sleep 4s && mono ../goesdump/goesdump.exe"
+split -v
+focus right
+screen -t xritdecoder /bin/bash -c "sleep 2s && ../xritdemod/xritDecoder"
+split
+focus down
+screen -t xritdemod /bin/bash -c "../xritdemod/xritDemodulator"
+focus left
+
