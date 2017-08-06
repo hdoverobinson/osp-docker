@@ -1,5 +1,5 @@
 layout new
-screen -t goesdump /bin/bash -c "sleep 4s && mono ../goesdump/goesdump.exe"
+screen -t goesdump /bin/bash -c "sleep 4s && cd ../goesdump && mono goesdump.exe"
 split -v
 focus right
 screen -t xritdecoder /bin/bash -c "sleep 2s && ../xritdemod/xritDecoder"
