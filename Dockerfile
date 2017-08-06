@@ -9,12 +9,12 @@ apt-get --no-install-recommends -y install build-essential cmake software-proper
 
 #compile xritdemod
 WORKDIR /usr/src/osp-build
-RUN git clone https://github.com/opensatelliteproject/xritdemod.git && \
-cd xritdemod/ && \
-add-apt-repository ppa:myriadrf/drivers -y && \
+RUN add-apt-repository ppa:myriadrf/drivers -y && \
 add-apt-repository ppa:myriadrf/gnuradio -y && \
 apt-get update && \
 apt-get --no-install-recommends -y install libairspy-dev libusb-1.0-0-dev libhackrf-dev libhackrf0 && \
+git clone https://github.com/opensatelliteproject/xritdemod.git && \
+cd xritdemod/ && \
 make libcorrect && \
 make libcorrect-install && \
 make libSatHelper && \
@@ -66,8 +66,8 @@ cp /usr/src/osp-build/xritdemod/decoder/build/xritDecoder . && \
 cp /usr/src/osp-build/xritdemod/demodulator/build/xritDemodulator . && \
 chmod +x *
 
-#where .osp-screenrc and .cfg files are to be made available
+#where configuration files and scripts are to be made available
 WORKDIR /root/run/
 
-#starts osp within the screenrc
-CMD ["/usr/bin/screen", "-c", ".osp-screenrc"]
+#starts osp with run.sh
+CMD ["/bin/bash", "run.sh"]
