@@ -68,3 +68,6 @@ chmod +x *
 
 #where .osp-screenrc and .cfg files are to be made available
 WORKDIR /root/run/
+
+#starts osp within the screenrc
+CMD ["/usr/bin/screen", "-c", ".osp-screenrc"]
