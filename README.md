@@ -5,8 +5,8 @@ Building the container:
 `cd osp-docker/ && docker build -t osp-docker .`
 
 Running the container for the first time:
-`docker run --name osp-docker --privileged -v /dev/bus/usb:/dev/bus/usb -v ~/osp-docker:/root/run -p 8090:8090 -it osp-docker`
-where "~/osp-docker" is the path to the directory of this repository.
+`docker run --name osp-docker --privileged -v /dev/bus/usb:/dev/bus/usb -v ~/osp-docker:/root/run -p 8090:8090 -t osp-docker`
+where "~/osp-docker" is the path to the directory of this repository. CTRL+C to exit.
 
 Subsequent starting, stopping, and attaching to the container:
 `docker container start osp-docker`
