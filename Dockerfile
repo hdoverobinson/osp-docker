@@ -2,17 +2,40 @@ FROM ubuntu:latest
 
 MAINTAINER harry@doverobinson.me
 
-#set up build dir and general deps
-RUN mkdir /usr/src/osp-build && \
-apt-get update && \
-apt-get --no-install-recommends -y install build-essential cmake software-properties-common apt-utils unzip git wget tzdata screen
+ENV GOESDUMP_WEB_URL https://github.com/opensatelliteproject/goesdump/releases/download/1.0.2-beta/goesdump-web.zip
 
-#compile xritdemod
-WORKDIR /usr/src/osp-build
-RUN add-apt-repository ppa:myriadrf/drivers -y && \
+RUN \
+BUILD_PACKAGES='build-essential \
+ca-certificates \
+ca-certificates-mono \
+cmake \
+git \
+libaec0 \
+libaec-dev \
+nuget \
+software-properties-common \
+unzip \
+wget' && \
+RUN_PACKAGES='libairspy-dev \
+libhackrf0 \
+libhackrf-dev \
+libmono-corlib4.5-cil \
+libmono-system4.0-cil \
+libmono-system-core4.0-cil \
+libusb-1.0-0-dev \
+mono-devel \
+monodevelop \
+screen \
+tzdata' && \
+apt-get update && \
+apt-get --no-install-recommends -y install $BUILD_PACKAGES && \
+add-apt-repository ppa:myriadrf/drivers -y && \
 add-apt-repository ppa:myriadrf/gnuradio -y && \
 apt-get update && \
-apt-get --no-install-recommends -y install libairspy-dev libusb-1.0-0-dev libhackrf-dev libhackrf0 && \
+apt-get --no-install-recommends -y install $RUN_PACKAGES && \
+rm -rf /var/lib/apt/lists/* && \
+mkdir /usr/src/osp-build/ && \
+cd /usr/src/osp-build/ && \
 git clone https://github.com/opensatelliteproject/xritdemod.git && \
 cd xritdemod/ && \
 make libcorrect && \
@@ -22,52 +45,40 @@ make libSatHelper-install && \
 make librtlsdr && \
 make librtlsdr-install && \
 make && \
-make test
-
-#prepare goesdump
-WORKDIR /usr/src/osp-build/
-RUN git clone https://github.com/opensatelliteproject/goesdump.git && \
+make test && \
+cd /usr/src/osp-build/ && \
+git clone https://github.com/opensatelliteproject/goesdump.git && \
 cd goesdump && \
 git clone https://github.com/opensatelliteproject/decompressor.git && \
 cd decompressor && \
-apt-get --no-install-recommends -y install libaec0 libaec-dev && \
 mkdir build && \
 cd build && \
 cmake .. && \
 make && \
 make install && \
-ldconfig
-
-#install mono and compile goesdump
-WORKDIR /usr/src/osp-build/goesdump
-RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF && \
-echo "deb http://download.mono-project.com/repo/debian xenial main" | tee /etc/apt/sources.list.d/mono-xamarin.list && \
-apt-get update && \
-apt-get --no-install-recommends -y install monodevelop mono-complete nuget && \
-wget http://www.monogame.net/releases/v3.5.1/monogame-sdk.run && \
-chmod +x monogame-sdk.run && \
-echo -en "y\ny\n" | ./monogame-sdk.run && \
+ldconfig && \
+cd /usr/src/osp-build/goesdump/ && \
+cert-sync /etc/ssl/certs/ca-certificates.crt && \
 nuget restore goesdump.sln && \
-mdtool build goesdump.sln -c:"Release|x86"
-
-#set up goesdump-web and executables
-WORKDIR /root/
-RUN mkdir goesdump && \
+mdtool build goesdump.sln -c:"Release|x86" && \
+cd /root/ && \
+mkdir goesdump && \
 cd goesdump && \
 cp -r /usr/src/osp-build/goesdump/goesdump/bin/Release/* . && \
 chmod +x goesdump.exe && \
-wget https://github.com/opensatelliteproject/goesdump/releases/download/1.0.2-beta/goesdump-web.zip && \
+wget "$GOESDUMP_WEB_URL" && \
 unzip goesdump-web.zip && \
+rm goesdump-web.zip && \
 mv build web && \
-cd .. && \
+cd /root/ && \
 mkdir xritdemod && \
 cd xritdemod && \
 cp /usr/src/osp-build/xritdemod/decoder/build/xritDecoder . && \
 cp /usr/src/osp-build/xritdemod/demodulator/build/xritDemodulator . && \
-chmod +x *
+chmod +x * && \
+rm -r /usr/src/osp-build/ && \
+apt-get purge -y --auto-remove $BUILD_PACKAGES
 
-#where configuration files and scripts are to be made available
 WORKDIR /root/run/
 
-#starts osp with run.sh
 CMD ["/bin/bash", "run.sh"]
