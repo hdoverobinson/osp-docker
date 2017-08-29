@@ -33,7 +33,7 @@ add-apt-repository ppa:myriadrf/drivers -y && \
 add-apt-repository ppa:myriadrf/gnuradio -y && \
 apt-get update && \
 apt-get --no-install-recommends -y install $RUN_PACKAGES && \
-rm -rf /var/lib/apt/lists/* && \
+rm -r /var/lib/apt/lists/* && \
 mkdir /usr/src/osp-build/ && \
 cd /usr/src/osp-build/ && \
 git clone https://github.com/opensatelliteproject/xritdemod.git && \
