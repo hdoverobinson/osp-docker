@@ -10,13 +10,13 @@ ca-certificates \
 ca-certificates-mono \
 cmake \
 git \
-libaec0 \
-libaec-dev \
 nuget \
 software-properties-common \
 unzip \
 wget' && \
-RUN_PACKAGES='libairspy-dev \
+RUN_PACKAGES='libaec0 \
+libaec-dev \
+libairspy-dev \
 libhackrf0 \
 libhackrf-dev \
 libmono-corlib4.5-cil \
